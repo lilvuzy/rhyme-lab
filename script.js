@@ -10,17 +10,14 @@ const resultDiv = document.getElementById("results");
 searchBox.addEventListener("keyup", onPress);
 
 async function onPress(event) {
-  if (event.key == "enter") {
+  if (event.key === "Enter") {
     event.preventDefault();
-    clearResults();
+    // clearResults();
 
     console.log(searchBox.value);
     const rhymeResults = await search(searchBox.value);
 
     const rhymeElements = await createElements(rhymeResults);
-
-    
-
   }
 }
 
@@ -30,19 +27,33 @@ function clearResults() {
   });
 }
 
-function search(query) {
+async function search(query) {
   const results = fetch(
     `https://rhymebrain.com/talk?function=getRhymes&word=${searchBox.value}`
-  ).then(function (response) {
-    return response.json();
-  })
-  .then(function (results) {
-    const truncated = results.slice(0, 10);
-    console.log(truncated);
-    return truncated;
-  })
+  )
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (results) {
+      const truncated = results.slice(0, 10);
+      console.log(truncated);
+      return truncated;
+    });
 }
 
-function createElements(results) {
+async function createElements(results) {
+  const wordInfo = await getWordInfo(results);
+}
 
+async function getWordInfo(results) {
+  const wordInfo = await Promise.all(
+    results.map(async (rhyme) => {
+      const wordInfo = await fetch(
+        `https://rhymebrain.com/talk?function=getRhymes&word=${rhyme.word}`
+      );
+      const wordInfoJson = await wordInfo.json();
+      return wordInfoJson;
+    })
+  );
+  return wordInfo;
 }
