@@ -1,22 +1,20 @@
-// const query = "hello";
-
-const searchBoxElem = document.getElementById("query");
+const searchBox = document.getElementById("query");
 const resultsContainerElem = document.getElementById("results");
 
 // when someone presses enter in the search box,
-searchBoxElem.addEventListener("keydown", whenSomeKeyPressed);
+searchBox.addEventListener("keydown", whenSomeKeyPressed);
 
 async function whenSomeKeyPressed(event) {
   if (event.key === "Enter") {
     event.preventDefault();
-    const rhymes = await searchForRhymes(searchBoxElem.value);
+    const rhymes = await search(searchBox.value);
     const rhymeElements = await createRhymeElements(rhymes);
     clearResultsElem();
     populateResultsElem(rhymeElements);
   }
 }
 
-function searchForRhymes(query) {
+function search(query) {
   const rhymeResults = fetch(
     `https://rhymebrain.com/talk?function=getRhymes&word=${query}`
   )
@@ -24,15 +22,11 @@ function searchForRhymes(query) {
       return responseFromEndpoint.json();
     })
     .then(function (rhymeResultsJson) {
-      const truncatedTo10 = rhymeResultsJson.slice(0, 10);
-      console.log(truncatedTo10);
-      return truncatedTo10;
+      const first10 = rhymeResultsJson.slice(0, 10);
+      console.log(first10);
+      return first10;
     });
   return rhymeResults;
-  // const rhymeResultsJson = await rhymeResults.json();
-  // const truncatedTo10 = rhymeResultsJson.slice(0, 10);
-  // console.log(truncatedTo10);
-  // return truncatedTo10;
 }
 
 async function createRhymeElements(rhymeResultsJson) {
