@@ -1,52 +1,48 @@
 // get relevant dom elements
-const queryInputElem = document.getElementById("query");
+const searchBox = document.getElementById("query");
 
 const searchForm = document.getElementById("search-form");
 
 const resultDiv = document.getElementById("results");
 
-searchForm.addEventListener("submit", (event) => {
-  console.log("submitting");
-  event.preventDefault();
-});
-
-const results = document.getElementById("results");
-
 // add event listener to know when to search
 
-queryInputElem.addEventListener("keyup", async function (ev) {
-  ev.preventDefault();
-  if (ev.key == "Enter") {
-    console.log("pressed enter");
+searchBox.addEventListener("keyup", onPress);
 
-    const rhymeResultsResp = await fetch(
-      `https://rhymebrain.com/talk?function=getRhymes&word=${queryInputElem.value}`
-    );
-    console.log(rhymeResultsResp);
-    const rhymeResults = await rhymeResultsResp.json();
+async function onPress(event) {
+  if (event.key == "enter") {
+    event.preventDefault();
+    clearResults();
 
-    console.log(rhymeResults);
-    displayRhymeElements(rhymeResults);
+    console.log(searchBox.value);
+    const rhymeResults = await search(searchBox.value);
+
+    const rhymeElements = await createElements(rhymeResults);
+
+    
+
   }
-});
+}
 
-function displayRhymeElements(rhymeResults) {
-  while (resultDiv.firstChild) {
-    resultDiv.removeChild(resultDiv.firstChild);
-  }
-
-  rhymeResults.forEach((element) => {
-    let newElement = document.createElement("p");
-    var newContent = document.createTextNode(element.word);
-
-    newElement.setAttribute(
-      "style",
-      `font-size: ${element.score / 3}px` +
-        "; display: inline-block; margin: 10px;"
-    );
-
-    newElement.appendChild(newContent);
-
-    resultDiv.insertAdjacentElement("beforeend", newElement);
+function clearResults() {
+  Array.from(resultDiv.childNodes).forEach((child) => {
+    child.remove;
   });
+}
+
+function search(query) {
+  const results = fetch(
+    `https://rhymebrain.com/talk?function=getRhymes&word=${searchBox.value}`
+  ).then(function (response) {
+    return response.json();
+  })
+  .then(function (results) {
+    const truncated = results.slice(0, 10);
+    console.log(truncated);
+    return truncated;
+  })
+}
+
+function createElements(results) {
+
 }
