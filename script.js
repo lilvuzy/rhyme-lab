@@ -78,7 +78,8 @@ function createWordInfoElements(wordInfo) {
 function styleRhymeResult(resultElem) {
   const styledResult = resultElem;
   const resultScore = parseInt(resultElem.dataset.score, 10);
-  styledResult.style.fontSize = `${0.5 + (3.5 * resultScore) / 300}rem`;
+  styledResult.style.fontSize = resultScore / 10 + "px";
+
   return styledResult;
 }
 
